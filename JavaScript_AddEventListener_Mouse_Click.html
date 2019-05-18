@@ -1,0 +1,31 @@
+<style>
+  body {
+    height: 200px;
+    background: beige;
+  }
+  .dot {
+    height: 8px; width: 8px;
+    border-radius: 4px; /* rounds corners */
+    background: blue;
+    position: absolute;
+  }
+</style>
+
+<script>
+
+/* The following JavaScript Program implements a primitive drawing program. */
+/* Every time you click the document, it adds a dot under your mouse pointer. */
+
+  window.addEventListener("click", event => {
+
+    let dot = document.createElement("div");
+
+    dot.className = "dot";
+    dot.style.left = (event.pageX - 4) + "px";
+    dot.style.top = (event.pageY - 4) + "px";
+
+    document.body.appendChild(dot);
+
+  });
+
+</script>

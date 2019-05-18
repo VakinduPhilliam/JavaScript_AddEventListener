@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Drag Multiple Images</title>
+  <style>
+    body {
+      margin: 20px;
+    }
+
+    #container {
+      width: 600px;
+      height: 400px;
+      background-color: #EEE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 7px;
+      touch-action: none;
+    }
+
+    .item {
+      border-radius: 50%;
+      touch-action: none;
+      user-select: none;
+      position: relative;
+    }
+
+    .item img {
+      pointer-events: none;
+    }
+
+    .one {
+      width: 100px;
+      height: 100px;
+      top: 0px;
+      left: 0px;
+    }
+
+    .two {
+      width: 60px;
+      height: 60px;
+      top: 30%;
+      left: 10%;
+    }
+
+    .three {
+      width: 40px;
+      height: 40px;
+      top: -40%;
+      left: -10%;
+    }
+
+    .four {
+      width: 80px;
+      height: 80px;
+      top: -10%;
+      left: 5%;
+    }
+
+    .item:active {
+      opacity: .75;
+    }
+
+    .item:hover {
+      cursor: pointer;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Drag Multiple Images</h1>
+  <div id="outerContainer">
+    <div id="container">
+      <div class="item one">
+        <img src="image1.jpg">
+      </div>
+      <div class="item two">
+        <img src="image2.jpg">
+      </div>
+      <div class="item three">
+        <img src="image3.jpg">
+      </div>
+      <div class="item four">
+        <img src="image4.jpg">
+      </div>
+    </div>
+  </div>
+  <script>
+
+    var container = document.querySelector("#container");
+    var activeItem = null;
+
+    var active = false;
+    var dragging = false;
+
+    container.addEventListener("touchstart", dragStart, false);
+    container.addEventListener("touchend", dragEnd, false);
+    container.addEventListener("touchmove", drag, false);
+
+    container.addEventListener("mousedown", dragStart, false);
+    container.addEventListener("mouseup", dragEnd, false);
+    container.addEventListener("mousemove", drag, false);
+
+    container.addEventListener("click", rotateElement, false);
+
+    function dragStart(e) {
+
+      if (e.target !== e.currentTarget) {
+
+        active = true;
+        dragging = false;
+
+        // this is the item we are interacting with
+
+        activeItem = e.target;
+
+        if (activeItem.degrees === undefined) {
+
+          activeItem.degrees = 0;
+
+        }
+
+        if (activeItem !== null) {
+
+          if (!activeItem.xOffset) {
+
+            activeItem.xOffset = 0;
+
+          }
+
+          if (!activeItem.yOffset) {
+
+            activeItem.yOffset = 0;
+
+          }
+
+          if (e.type === "touchstart") {
+
+            activeItem.initialX = e.touches[0].clientX - activeItem.xOffset;
+            activeItem.initialY = e.touches[0].clientY - activeItem.yOffset;
+
+          } else {
+
+            activeItem.initialX = e.clientX - activeItem.xOffset;
+            activeItem.initialY = e.clientY - activeItem.yOffset;
+
+          }
+        }
+      }
+    }
+
+    function dragEnd(e) {
+
+      if (activeItem !== null) {
+
+        activeItem.initialX = activeItem.currentX;
+        activeItem.initialY = activeItem.currentY;
+
+      }
+
+      active = false;
+      activeItem = null;
+
+    }
+
+    function drag(e) {
+      if (active) {
+
+        dragging = true;
+
+        if (e.type === "touchmove") {
+
+          e.preventDefault();
+
+          activeItem.currentX = e.touches[0].clientX - activeItem.initialX;
+          activeItem.currentY = e.touches[0].clientY - activeItem.initialY;
+
+        } else {
+
+          activeItem.currentX = e.clientX - activeItem.initialX;
+          activeItem.currentY = e.clientY - activeItem.initialY;
+
+        }
+
+        activeItem.xOffset = activeItem.currentX;
+        activeItem.yOffset = activeItem.currentY;
+
+        setTranslate(activeItem.currentX, activeItem.currentY, activeItem);
+
+      }
+    }
+
+    function rotateElement(e) {
+
+      if (dragging === false) {
+
+        if (activeItem === null) {
+
+          activeItem = e.target;
+
+        }
+
+        console.log(activeItem.degrees);
+
+        activeItem.degrees += 22.5;
+        
+        activeItem.querySelector("img").style.transform = `rotate(${activeItem.degrees}deg)`;
+
+      }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+
+      el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+
+      //el.querySelector("img").style.transform = `rotate(${degrees}deg)`;
+
+    }
+
+  </script>
+</body>
+
+</html>
